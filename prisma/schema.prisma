@@ -1,0 +1,119 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model BreakfastItem {
+  id           Int     @id @default(autoincrement())
+  name         String
+  price        Float
+  image_url    String?
+  availability Boolean @default(true)
+}
+
+model Order {
+  id            String   @id @default(uuid())
+  status        String   @default("PENDING_PAYMENT")
+  items         String
+  total_price   Float
+  customer_name String?
+  phone         String?
+  flat          String?
+  house         String?
+  road          String?
+  area          String?
+  delivery_fee  Float    @default(0)
+  created_at    DateTime @default(now())
+}
+
+model Package {
+  id            String         @id @default(uuid())
+  title         String
+  base_price    Float
+  optional_price Float?
+  image_url     String?
+  items         PackageItem[]
+  deployments   DeployedPackage[]
+  created_at    DateTime       @default(now())
+  updated_at    DateTime       @updatedAt
+}
+
+model PackageItem {
+  id             String   @id @default(uuid())
+  name           String
+  portion        String
+  calories       Int
+  protein        Float
+  carbs          Float
+  fiber          Float
+  fat            Float
+  key_nutrients  String?
+  
+  package_id     String
+  package        Package  @relation(fields: [package_id], references: [id], onDelete: Cascade)
+}
+
+model Beverage {
+  id            String            @id @default(uuid())
+  name          String
+  price         Float
+  image_url     String?
+  description   String?
+  deployments   DeployedBeverage[]
+  created_at    DateTime          @default(now())
+  updated_at    DateTime          @updatedAt
+}
+
+model DeployedMenu {
+  id          String             @id @default(uuid())
+  date        DateTime           @unique
+  packages    DeployedPackage[]
+  beverages   DeployedBeverage[]
+  created_at  DateTime           @default(now())
+  updated_at  DateTime           @updatedAt
+}
+
+model DeployedPackage {
+  menu_id     String
+  package_id  String
+  menu        DeployedMenu @relation(fields: [menu_id], references: [id], onDelete: Cascade)
+  package     Package      @relation(fields: [package_id], references: [id], onDelete: Cascade)
+
+  @@id([menu_id, package_id])
+}
+
+model DeployedBeverage {
+  menu_id     String
+  beverage_id String
+  menu        DeployedMenu @relation(fields: [menu_id], references: [id], onDelete: Cascade)
+  beverage    Beverage     @relation(fields: [beverage_id], references: [id], onDelete: Cascade)
+
+  @@id([menu_id, beverage_id])
+}
+
+model User {
+  id       String @id @default(uuid())
+  email    String @unique
+  password String
+}
+
+model WebsiteSettings {
+  id           String @id @default("default")
+  logo_text    String @default("SATOSHI")
+  logo_url     String?
+  hero_text    String @default("Silent Beauty.")
+  updated_at   DateTime @updatedAt
+}
+
+model LandingProduct {
+  id           String @id @default(uuid())
+  name         String
+  price        Float
+  image_url    String
+  created_at   DateTime @default(now())
+  updated_at   DateTime @updatedAt
+}
