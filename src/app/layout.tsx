@@ -16,6 +16,9 @@ const cormorant = Cormorant_Garamond({
 export const metadata: Metadata = {
   title: "Satoshi | Live with Intention",
   description: "A premium, zen-inspired lifestyle experience",
+  icons: {
+    icon: "/icon.png",
+  },
 };
 
 export default function RootLayout({
